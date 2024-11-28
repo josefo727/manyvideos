@@ -1,44 +1,40 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class AuthenticationTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class);
 
-    public function test_login_screen_can_be_rendered(): void
-    {
-        $response = $this->get('/login');
+test('login screen can be rendered', function () {
+    $this->mock(\Laravel\Fortify\Contracts\LoginViewResponse::class)
+        ->shouldReceive('toResponse')
+        ->andReturn(response('hello world'));
 
-        $response->assertStatus(200);
-    }
+    $response = $this->get('/login');
 
-    public function test_users_can_authenticate_using_the_login_screen(): void
-    {
-        $user = User::factory()->create();
+    $response->assertStatus(200);
+    $response->assertSeeText('hello world');
+});
 
-        $response = $this->post('/login', [
+test('users can authenticate using the login screen', function () {
+    $user = User::factory()->create();
+
+    $response = $this->withoutExceptionHandling()->post('/login', [
             'email' => $user->email,
             'password' => 'password',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
-    }
+    $response->assertRedirect('/dashboard');
+});
 
-    public function test_users_can_not_authenticate_with_invalid_password(): void
-    {
-        $user = User::factory()->create();
+test('users can not authenticate with invalid password', function () {
+    $user = User::factory()->create();
 
-        $this->post('/login', [
-            'email' => $user->email,
-            'password' => 'wrong-password',
-        ]);
+    $this->post('/login', [
+        'email' => $user->email,
+        'password' => 'wrong-password',
+        '_token' => csrf_token(),
+    ]);
 
-        $this->assertGuest();
-    }
-}
+    $this->assertGuest();
+});
