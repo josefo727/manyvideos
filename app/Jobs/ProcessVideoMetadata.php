@@ -42,7 +42,7 @@ class ProcessVideoMetadata implements ShouldQueue
         $height = $videoFile->getStreams()->videos()->first()->get('height');
         $size = Storage::disk('public')->size($this->video->path);
 
-        $this->video->update([
+        $this->video->updateQuietly([
             'duration' => $duration,
             'resolution' => "{$width}x{$height}",
             'size' => $size,
