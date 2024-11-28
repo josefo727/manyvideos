@@ -72,6 +72,12 @@ return [
             'after_commit' => false,
         ],
 
+        'video-metadata' => [
+            'driver' => 'redis',
+            'queue' => 'video-metadata',
+            'retry_after' => 120,
+        ],
+
     ],
 
     /*
