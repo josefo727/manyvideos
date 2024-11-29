@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Jobs\ProcessVideoMetadata;
 use App\Models\Video;
+use App\Notifications\VideoPublished;
 
 class VideoObserver
 {

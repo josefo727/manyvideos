@@ -3,6 +3,8 @@
 namespace App\Jobs;
 
 use App\Models\Video;
+use App\Notifications\VideoPublished;
+use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -28,14 +30,31 @@ class ProcessVideoMetadata implements ShouldQueue
      */
     public function handle(): void
     {
+        $this->ensureVideoFileExists();
+        $this->processMetadata();
+        $this->generateThumbnail();
+        SendVideoNotification::dispatch($this->video);
+    }
+
+    /**
+     * @return void
+     */
+    private function ensureVideoFileExists(): void
+    {
         $filePath = Storage::disk('public')->path($this->video->path);
 
         if (! file_exists($filePath)) {
             throw new RuntimeException("The file {$filePath} does not exist.");
         }
+    }
 
+    /**
+     * @return void
+     */
+    private function processMetadata(): void
+    {
         $ffmpeg = FFMpeg::create();
-        $videoFile = $ffmpeg->open($filePath);
+        $videoFile = $ffmpeg->open(Storage::disk('public')->path($this->video->path));
 
         $duration = $videoFile->getFormat()->get('duration');
         $width = $videoFile->getStreams()->videos()->first()->get('width');
@@ -47,5 +66,28 @@ class ProcessVideoMetadata implements ShouldQueue
             'resolution' => "{$width}x{$height}",
             'size' => $size,
         ]);
+    }
+
+    /**
+     * @return void
+     */
+    private function generateThumbnail(): void
+    {
+        $thumbnailDirectory = Storage::disk('public')->path('thumbnails');
+        if (!file_exists($thumbnailDirectory)) {
+            mkdir($thumbnailDirectory, 0775, true);
+        }
+
+        $thumbnailPath = "thumbnails/{$this->video->id}.jpg";
+        $videoFile = FFMpeg::create()->open(Storage::disk('public')->path($this->video->path));
+        $thumbnailFullPath = Storage::disk('public')->path($thumbnailPath);
+
+        $videoFile->frame(TimeCode::fromSeconds(2))->save($thumbnailFullPath);
+
+        if (!file_exists($thumbnailFullPath)) {
+            throw new RuntimeException("Thumbnail generation failed for video {$thumbnailFullPath}");
+        }
+
+        $this->video->updateQuietly(['thumbnail' => $thumbnailPath]);
     }
 }

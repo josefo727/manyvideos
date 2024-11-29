@@ -34,5 +34,9 @@ it('updates video metadata correctly', function () {
         expect($video->resolution)->not->toBeNull();
         expect($video->duration)->not->toBeNull();
         Storage::disk('public')->delete($path);
+
+        $thumbnailPath = $video->thumbnail;
+        expect(Storage::disk('public')->exists($thumbnailPath))->toBeTrue();
+        Storage::disk('public')->delete($thumbnailPath);
     });
 });
