@@ -69,6 +69,14 @@ class User extends Authenticatable
     /**
      * @return HasMany
      */
+    public function videos(): HasMany
+    {
+        return $this->hasMany(Video::class);
+    }
+
+    /**
+     * @return HasMany
+     */
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);

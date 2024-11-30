@@ -6,7 +6,6 @@
         "dev": "vite"
     },
     "devDependencies": {
-        "@inertiajs/vue3": "^1.0.14",
         "@tailwindcss/forms": "^0.5.7",
         "@tailwindcss/typography": "^0.5.10",
         "@vitejs/plugin-vue": "^5.0.0",
@@ -19,5 +18,9 @@
         "vite": "^5.0",
         "vite-plugin-vue-devtools": "^7.6.4",
         "vue": "^3.3.13"
+    },
+    "dependencies": {
+        "@inertiajs/inertia": "^0.11.1",
+        "@inertiajs/vue3": "^1.2.0"
     }
 }

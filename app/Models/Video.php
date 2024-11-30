@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\CarbonInterval;
 use Database\Factories\VideoFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class Video extends Model
 {
@@ -26,6 +28,16 @@ class Video extends Model
         'duration',
         'resolution',
         'thumbnail',
+    ];
+
+    /**
+     * @var string[]
+     */
+    protected $appends = [
+        'comments_count',
+        'thumbnail_path',
+        'size_formated',
+        'formatted_duration',
     ];
 
     /**
@@ -60,5 +72,47 @@ class Video extends Model
         return Attribute::make(
             get: fn () => $this->comments()->count(),
         );
+    }
+
+    /**
+     * @return Attribute
+     */
+    protected function thumbnailPath(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => Storage::disk('public')->url($this->thumbnail),
+        );
+    }
+
+    protected function sizeFormated(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->formatBytes($this->size)
+        );
+    }
+
+    protected function formatBytes(int $bytes, int $precision = 2): string
+    {
+        if ($bytes > 0) {
+            $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+            $power = floor(log($bytes, 1024));
+            $value = $bytes / (1024 ** $power);
+            return number_format($value, $precision) . ' ' . $units[$power];
+        }
+        return '0 B';
+    }
+
+    protected function formattedDuration(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->formatDuration($this->duration)
+        );
+    }
+
+    protected function formatDuration(int $seconds): string
+    {
+        $interval = CarbonInterval::seconds($seconds);
+
+        return $interval->format('%i:%s');
     }
 }
