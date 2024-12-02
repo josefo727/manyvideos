@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Carbon\CarbonInterval;
-use Database\Factories\VideoFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,12 +13,8 @@ use Illuminate\Support\Facades\Storage;
 
 class Video extends Model
 {
-    /** @use HasFactory<VideoFactory> */
     use HasFactory;
 
-    /**
-     * @var string[]
-     */
     protected $fillable = [
         'user_id',
         'name',
@@ -30,74 +25,64 @@ class Video extends Model
         'thumbnail',
     ];
 
-    /**
-     * @var string[]
-     */
     protected $appends = [
         'comments_count',
         'thumbnail_path',
-        'size_formated',
+        'formatted_size',
         'formatted_duration',
     ];
 
-    /**
-     * @return BelongsTo
-     */
+    private const SIZE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB'];
+    private const DEFAULT_SIZE_PRECISION = 2;
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * @return BelongsToMany
-     */
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class, 'tag_video');
     }
 
-    /**
-     * @return HasMany
-     */
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }
 
-    /**
-     * @return Attribute
-     */
     protected function commentsCount(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->comments()->count(),
+            get: fn() => $this->comments()->count(),
         );
     }
 
-    /**
-     * @return Attribute
-     */
     protected function thumbnailPath(): Attribute
     {
         return Attribute::make(
-            get: fn () => Storage::disk('public')->url($this->thumbnail),
+            get: fn() => $this->getPublicThumbnailUrl(),
         );
     }
 
-    protected function sizeFormated(): Attribute
+    private function getPublicThumbnailUrl(): string
+    {
+        return Storage::disk('public')->url($this->thumbnail);
+    }
+
+    protected function formattedSize(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->formatBytes($this->size)
+            get: fn() => $this->formatBytes($this->size),
         );
     }
 
-    protected function formatBytes(int | null $bytes, int $precision = 2): string
+    private function formatBytes(?int $bytes, int $precision = self::DEFAULT_SIZE_PRECISION): string
     {
         if ($bytes > 0) {
-            $units = ['B', 'KB', 'MB', 'GB', 'TB'];
             $power = floor(log($bytes, 1024));
             $value = $bytes / (1024 ** $power);
-            return number_format($value, $precision) . ' ' . $units[$power];
+            $unit = self::SIZE_UNITS[$power];
+            return number_format($value, $precision) . " $unit";
         }
         return '0 B';
     }
@@ -105,16 +90,14 @@ class Video extends Model
     protected function formattedDuration(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->formatDuration($this->duration)
+            get: fn() => $this->formatDuration($this->duration),
         );
     }
 
-    protected function formatDuration(int | null $seconds): string
+    private function formatDuration(?int $seconds): string
     {
         $seconds = $seconds ?? 0;
-
         $interval = CarbonInterval::seconds($seconds);
-
         return $interval->format('%i:%s');
     }
 }
