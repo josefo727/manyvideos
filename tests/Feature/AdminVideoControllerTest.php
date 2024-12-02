@@ -68,6 +68,7 @@ it('allows a user to upload a video', function () {
 });
 
 it('allows a user to view the edit page for their video', function () {
+    Event::fake();
     $user = User::factory()->create();
     $video = Video::factory()->for($user)->create();
 
@@ -157,6 +158,7 @@ it('allows a user to delete their video', function () {
 });
 
 it('does not allow a user to edit a video that does not belong to them', function () {
+    Event::fake();
     $user = User::factory()->create();
     $otherUser = User::factory()->create();
     $tags = Tag::factory()->count(4)->create();
@@ -174,7 +176,7 @@ it('does not allow a user to edit a video that does not belong to them', functio
 });
 
 it('does not allow a user to delete a video that does not belong to them', function () {
-    Storage::fake('public');
+    Event::fake();
 
     $user = User::factory()->create();
     $otherUser = User::factory()->create();
