@@ -5,12 +5,15 @@ import VideoForm from './VideoForm.vue';
 
 const props = defineProps({
     video: Object,
+    tags: Array,
+    videoTags: Array,
 });
 
 const form = useForm({
-    id: props.video.id, // Necesario para usar en `form.submit`
+    id: props.video.id,
     name: props.video.name,
     video: null,
+    tags: props.videoTags,
 });
 
 const updateVideo = () => {
@@ -43,7 +46,7 @@ const updateVideo = () => {
                         </a>
                     </div>
                     <div class="max-w-7xl mx-auto my-5 sm:px-6 lg:px-8">
-                        <VideoForm :form="form" :isEdit="true" />
+                        <VideoForm :form="form" :tags="props.tags" :isEdit="true" />
                     </div>
                 </div>
             </div>

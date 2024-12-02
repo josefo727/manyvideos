@@ -3,9 +3,14 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { useForm } from '@inertiajs/vue3';
 import VideoForm from './VideoForm.vue';
 
+const props = defineProps({
+    tags: Array,
+});
+
 const form = useForm({
     name: '',
     video: null,
+    tags: [],
 });
 
 const createVideo = () => {
@@ -38,7 +43,7 @@ const createVideo = () => {
                         </a>
                     </div>
                     <div class="max-w-7xl mx-auto my-5 sm:px-6 lg:px-8">
-                        <VideoForm :form="form" :isEdit="false" />
+                        <VideoForm :form="form" :tags="props.tags" :isEdit="false" />
                     </div>
                 </div>
             </div>

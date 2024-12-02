@@ -55,6 +55,9 @@ onMounted(async () => {
                                     <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
                                         Thumbnail
                                     </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
+                                        Tags
+                                    </th>
                                     <th scope="col" class="px-6 py-3 text-right text-sm font-medium text-gray-600 uppercase tracking-wider">
                                         Actions
                                     </th>
@@ -73,6 +76,9 @@ onMounted(async () => {
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <img :src="video.thumbnail_path" alt="Thumbnail" class="w-16 h-16 rounded-md shadow">
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                        {{ video.tags.map(tag => tag.name).join(', ') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <a :href="`/admin/videos/${video.id}/edit`">

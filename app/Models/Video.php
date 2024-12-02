@@ -91,7 +91,7 @@ class Video extends Model
         );
     }
 
-    protected function formatBytes(int $bytes, int $precision = 2): string
+    protected function formatBytes(int | null $bytes, int $precision = 2): string
     {
         if ($bytes > 0) {
             $units = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -109,8 +109,10 @@ class Video extends Model
         );
     }
 
-    protected function formatDuration(int $seconds): string
+    protected function formatDuration(int | null $seconds): string
     {
+        $seconds = $seconds ?? 0;
+
         $interval = CarbonInterval::seconds($seconds);
 
         return $interval->format('%i:%s');

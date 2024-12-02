@@ -15,6 +15,8 @@ class VideoFormRequest extends FormRequest
     {
         $rules = [
             'name' => 'required|string|max:255',
+            'tags' => 'required|array',
+            'tags.*' => 'exists:tags,id',
         ];
 
         if ($this->isMethod('post')) {
@@ -31,6 +33,9 @@ class VideoFormRequest extends FormRequest
         return [
             'video.mimetypes' => 'The file must be a valid video with avi, mpeg, quicktime or mp4 extension.',
             'video.max' => 'The video should be no larger than 200MB.',
+            'tags.required' => 'At least one tag is required.',
+            'tags.array' => 'The tags must be provided as an array.',
+            'tags.*.exists' => 'Selected tag is invalid.',
         ];
     }
 }

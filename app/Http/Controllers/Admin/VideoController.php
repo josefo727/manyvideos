@@ -3,9 +3,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\VideoFormRequest;
+use App\Models\Tag;
 use App\Models\Video;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -15,7 +15,10 @@ class VideoController extends Controller
 {
     public function index(): Response
     {
-        $videos = auth()->user()->videos()->with('comments')->paginate();
+        $videos = auth()->user()
+            ->videos()
+            ->with(['tags', 'comments'])
+            ->paginate();
 
         return Inertia::render('Admin/Videos/Index', [
             'videos' => $videos,
@@ -24,18 +27,24 @@ class VideoController extends Controller
 
     public function create(): Response
     {
-        return Inertia::render('Admin/Videos/Create');
+        $tags = Tag::all();
+
+        return Inertia::render('Admin/Videos/Create', [
+            'tags' => $tags,
+        ]);
     }
 
     public function store(VideoFormRequest $request): RedirectResponse
     {
         try {
             $path = $request->file('video')->store('videos', 'public');
-            Video::query()->create([
+            $video = Video::query()->create([
                 'name' => $request->input('name'),
                 'path' => $path,
                 'user_id' => auth()->id(),
             ]);
+
+            $video->tags()->sync($request->input('tags', []));
 
             return redirect()->route('videos.index')->with('success', 'The video is being processed, we will notify you when it is published.');
         } catch (\Exception $e) {
@@ -56,9 +65,10 @@ class VideoController extends Controller
             abort(403);
         }
 
-        return Inertia::render('Admin/Videos/Edit', [
-            'video' => $video,
-        ]);
+        $tags = Tag::all();
+        $videoTags = $video->tags->pluck('id')->toArray();
+
+        return Inertia::render('Admin/Videos/Edit', compact('video', 'tags', 'videoTags'));
     }
 
     public function update(VideoFormRequest $request, Video $video): RedirectResponse
@@ -77,6 +87,8 @@ class VideoController extends Controller
 
             $video->name = $request->input('name');
             $video->save();
+
+            $video->tags()->sync($request->input('tags', []));
 
             return redirect()->route('videos.index')
                 ->with('success', 'The video has been updated successfully.');

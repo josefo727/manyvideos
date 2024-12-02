@@ -4,6 +4,10 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    tags: {
+        type: Object,
+        required: true,
+    },
     isEdit: {
         type: Boolean,
         default: false,
@@ -16,10 +20,8 @@ const handleFileChange = (event) => {
 
 const handleSubmit = () => {
     if (props.isEdit) {
-        // Enviar como PUT
         props.form.submit('put', `/admin/videos/${props.form.id}`);
     } else {
-        // Enviar como POST
         props.form.submit('post', '/admin/videos');
     }
 };
@@ -38,6 +40,23 @@ const handleSubmit = () => {
             />
             <div v-if="props.form.errors.name" class="mt-2 text-red-600 text-sm">
                 {{ props.form.errors.name }}
+            </div>
+        </div>
+        <div>
+            <label for="tags" class="block text-sm font-medium text-gray-700">Tags</label>
+            <div class="grid grid-cols-2 gap-2 mt-1">
+                <label v-for="tag in props.tags" :key="tag.id" class="flex items-center">
+                    <input
+                        type="checkbox"
+                        :value="tag.id"
+                        v-model="props.form.tags"
+                        class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
+                    />
+                    <span class="ml-2 text-sm text-gray-700">{{ tag.name }}</span>
+                </label>
+            </div>
+            <div v-if="props.form.errors.tags" class="mt-2 text-red-600 text-sm">
+                {{ props.form.errors.tags }}
             </div>
         </div>
         <div>
