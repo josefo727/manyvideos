@@ -18,6 +18,7 @@ class VideoController extends Controller
         $videos = auth()->user()
             ->videos()
             ->with(['tags', 'comments'])
+            ->orderBy('id', 'desc')
             ->paginate();
 
         return Inertia::render('Admin/Videos/Index', [

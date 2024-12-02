@@ -23,7 +23,7 @@ it('shows a list of the user\'s videos', function () {
         ->assertInertia(fn ($page) =>
         $page->component('Admin/Videos/Index')
             ->has('videos.data', 3)
-            ->where('videos.data.0.name', $videos->first()->name)
+            ->where('videos.data.0.name', $videos->reverse()->first()->name)
         );
 });
 
