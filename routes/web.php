@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\VideoController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -23,4 +24,5 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
     Route::resource('/admin/videos', VideoController::class)->except(['show']);
+    Route::resource('/admin/tags', TagController::class)->except(['show']);
 });
