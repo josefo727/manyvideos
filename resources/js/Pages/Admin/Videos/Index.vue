@@ -9,9 +9,11 @@ const props = defineProps({
     },
 });
 
+const localVideos = ref(props.videos);
+
 const fetchVideos = async () => {
     const { data } = await axios.get('/admin/videos');
-    videos.value = data;
+    localVideos.value = data;
 };
 
 
