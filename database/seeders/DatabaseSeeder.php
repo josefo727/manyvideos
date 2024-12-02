@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -19,5 +18,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'josefo',
             'email' => 'josefo727@gmail.com',
         ]);
+
+        $this->call(TagSeeder::class);
     }
 }
