@@ -71,7 +71,7 @@ onMounted(async () => {
                                         {{ video.name }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                        {{ video.size_formated }}
+                                        {{ video.formatted_size }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                                         {{ video.formatted_duration }} m:s
