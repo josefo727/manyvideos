@@ -9,9 +9,11 @@ const props = defineProps({
     },
 });
 
+const localTags = ref(props.tags);
+
 const fetchTags = async () => {
     const {data} = await axios.get('/admin/tags');
-    tags.value = data;
+    localTags.value = data;
 };
 
 onMounted(async () => {
