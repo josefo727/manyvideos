@@ -66,7 +66,9 @@ class Video extends Model
 
     private function getPublicThumbnailUrl(): string
     {
-        return Storage::disk('public')->url($this->thumbnail);
+        return empty($this->thumbnail)
+            ? '#'
+            : Storage::disk('public')->url($this->thumbnail);
     }
 
     protected function formattedSize(): Attribute

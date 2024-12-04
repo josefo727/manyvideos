@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\Video;
-use App\Notifications\VideoPublished;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
 use Illuminate\Bus\Queueable;
@@ -26,32 +25,42 @@ class ProcessVideoMetadata implements ShouldQueue
     ){}
 
     /**
-     * Execute the job.
+     * @return void
      */
     public function handle(): void
     {
-        $this->ensureVideoFileExists();
-        $this->processMetadata();
-        $this->generateThumbnail();
-        SendVideoNotification::dispatch($this->video);
+        $this->pipeline();
     }
 
     /**
      * @return void
      */
-    private function ensureVideoFileExists(): void
+    protected function pipeline(): void
+    {
+        $this->ensureVideoFileExists()
+            ->processMetadata()
+            ->generateThumbnail()
+            ->sendNotification();
+    }
+
+    /**
+     * @return ProcessVideoMetadata
+     */
+    private function ensureVideoFileExists(): ProcessVideoMetadata
     {
         $filePath = Storage::disk('public')->path($this->video->path);
 
         if (! file_exists($filePath)) {
             throw new RuntimeException("The file {$filePath} does not exist.");
         }
+
+        return $this;
     }
 
     /**
-     * @return void
+     * @return ProcessVideoMetadata
      */
-    private function processMetadata(): void
+    private function processMetadata(): ProcessVideoMetadata
     {
         $ffmpeg = FFMpeg::create();
         $videoFile = $ffmpeg->open(Storage::disk('public')->path($this->video->path));
@@ -66,12 +75,14 @@ class ProcessVideoMetadata implements ShouldQueue
             'resolution' => "{$width}x{$height}",
             'size' => $size,
         ]);
+
+        return $this;
     }
 
     /**
-     * @return void
+     * @return ProcessVideoMetadata
      */
-    private function generateThumbnail(): void
+    private function generateThumbnail(): ProcessVideoMetadata
     {
         $thumbnailDirectory = Storage::disk('public')->path('thumbnails');
         if (!file_exists($thumbnailDirectory)) {
@@ -89,5 +100,15 @@ class ProcessVideoMetadata implements ShouldQueue
         }
 
         $this->video->updateQuietly(['thumbnail' => $thumbnailPath]);
+
+        return $this;
+    }
+
+    /**
+     * @return void
+     */
+    public function sendNotification(): void
+    {
+        SendVideoNotification::dispatch($this->video)->onQueue('send-notifications');
     }
 }
