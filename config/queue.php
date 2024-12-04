@@ -78,6 +78,12 @@ return [
             'retry_after' => 120,
         ],
 
+        'send-notifications' => [
+            'driver' => 'redis',
+            'queue' => 'send-notifications',
+            'retry_after' => 120,
+        ],
+
     ],
 
     /*
