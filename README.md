@@ -5,9 +5,8 @@ Welcome to the **Laravel Video Processing Application**, a modern, feature-rich 
 ## Features
 
 - **Video Processing Pipeline**: Includes metadata extraction and user notifications.
-- **Real-Time Updates**: Achieved via WebSockets with **Pusher**.
+- **Real-Time Updates**: Achieved via WebSockets powered by Laravel Reverb.
 - **Advanced UI**: Built with **TailwindCSS** and **Vue.js**, ensuring responsiveness and a modern design.
-- **Role-Based Access Control**: Manage user permissions effectively.
 - **RESTful API**: Supports programmatic access to comments.
 - **TDD with Pest**: Built using Test-Driven Development principles for robustness.
 - **VILT Stack**: Combines **Vue.js**, **Inertia.js**, **Laravel**, and **TailwindCSS**.
