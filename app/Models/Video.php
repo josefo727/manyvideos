@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\CarbonInterval;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +12,22 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * @property int $user_id
+ * @property string $name
+ * @property string $path
+ * @property int $size
+ * @property int $duration
+ * @property string $resolution
+ * @property string $thumbnail
+ * @property User $user
+ * @property Collection|Tag[] $tags
+ * @property Collection|Comment[] $comments
+ * @property int $comments_count
+ * @property string $thumbnail_path
+ * @property string $formatted_size
+ * @property string $formatted_duration
+ */
 class Video extends Model
 {
     use HasFactory;
