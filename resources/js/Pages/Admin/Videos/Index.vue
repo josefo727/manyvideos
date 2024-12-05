@@ -1,24 +1,11 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { ref, onMounted } from 'vue';
 
 const props = defineProps({
     videos: {
         type: Object,
         required: true,
     },
-});
-
-const localVideos = ref(props.videos);
-
-const fetchVideos = async () => {
-    const { data } = await axios.get('/admin/videos');
-    localVideos.value = data;
-};
-
-
-onMounted(async () => {
-    await fetchVideos();
 });
 
 </script>

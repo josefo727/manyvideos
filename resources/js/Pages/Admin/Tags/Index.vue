@@ -1,6 +1,5 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { ref, onMounted } from 'vue';
 
 const props = defineProps({
     tags: {
@@ -9,16 +8,6 @@ const props = defineProps({
     },
 });
 
-const localTags = ref(props.tags);
-
-const fetchTags = async () => {
-    const {data} = await axios.get('/admin/tags');
-    localTags.value = data;
-};
-
-onMounted(async () => {
-    await fetchTags();
-});
 </script>
 
 <template>
