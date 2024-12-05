@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Artisan;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -45,3 +47,8 @@ function something()
 {
     // ..
 }
+
+beforeAll(function () {
+    Artisan::call('config:clear');
+    config()->set('app.env', 'testing');
+});

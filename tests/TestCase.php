@@ -10,8 +10,5 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        config()->set('app.env', 'testing');
-        Artisan::call('config:clear');
     }
 }
