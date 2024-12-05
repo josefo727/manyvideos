@@ -13,6 +13,30 @@ class TagSeeder extends Seeder
      */
     public function run(): void
     {
-        Tag::factory(10)->create();
+        $videoTags = [
+            'sports',
+            'adventure',
+            'gaming',
+            'travel',
+            'food',
+            'technology',
+            'health',
+            'fitness',
+            'education',
+            'entertainment',
+            'nature',
+            'comedy',
+            'music',
+            'fashion',
+            'lifestyle',
+            'news',
+            'science',
+            'history',
+            'art',
+            'motivation'
+        ];
+        Tag::factory(count($videoTags))
+            ->sequence(fn ($sequence) => ['name' => $videoTags[$sequence->index]])
+            ->create();
     }
 }
