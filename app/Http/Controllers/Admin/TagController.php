@@ -13,7 +13,7 @@ class TagController extends Controller
 {
     public function index(): Response
     {
-        $tags = Tag::query()->latest()->paginate();
+        $tags = Tag::query()->latest()->paginate(10);
 
         return Inertia::render('Admin/Tags/Index', [
             'tags' => $tags,

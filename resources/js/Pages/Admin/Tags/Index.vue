@@ -1,5 +1,6 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { Inertia } from '@inertiajs/inertia';
 
 const props = defineProps({
     tags: {
@@ -7,6 +8,12 @@ const props = defineProps({
         required: true,
     },
 });
+
+function changePage(url) {
+    if (url) {
+        Inertia.get(url);
+    }
+}
 
 </script>
 
@@ -66,6 +73,24 @@ const props = defineProps({
                             </tr>
                             </tbody>
                         </table>
+                    </div>
+                    <!-- Paginación -->
+                    <div class="flex justify-between items-center p-6">
+                        <button
+                            @click="changePage(tags.prev_page_url)"
+                            :disabled="!tags.prev_page_url"
+                            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                        >
+                            Previous
+                        </button>
+
+                        <button
+                            @click="changePage(tags.next_page_url)"
+                            :disabled="!tags.next_page_url"
+                            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                        >
+                            Next
+                        </button>
                     </div>
                 </div>
             </div>
