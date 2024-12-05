@@ -16,7 +16,7 @@ it('retrieves comments for a video', function () {
     $response = $this->getJson("/api/videos/{$video->id}/comments");
 
     $response->assertStatus(200)
-        ->assertJsonCount(3, 'data')
+        ->assertJsonCount(3)
         ->assertJsonFragment(['id' => $comments->first()->id]);
 });
 
@@ -26,7 +26,8 @@ it('stores a new comment for a video', function () {
     $video = Video::factory()->create();
     $commentData = ['content' => 'This is a test comment.'];
 
-    $response = $this->actingAs($user, 'sanctum')->postJson("/api/videos/{$video->id}/comments", $commentData);
+    $response = $this->actingAs($user, 'sanctum')
+        ->postJson("/api/videos/{$video->id}/comments/{$user->id}", $commentData);
 
     $response->assertStatus(201)
         ->assertJsonFragment(['content' => $commentData['content']]);

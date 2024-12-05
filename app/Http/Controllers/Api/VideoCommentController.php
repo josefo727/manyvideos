@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CommentRequest;
+use App\Models\User;
 use App\Models\Video;
 use Illuminate\Http\JsonResponse;
 
@@ -15,7 +16,11 @@ class VideoCommentController extends Controller
      */
     public function index(Video $video): JsonResponse
     {
-        $comments = $video->comments()->latest()->paginate(10);
+        $comments = $video
+            ->comments()
+            ->with('user:id,name')
+            ->latest()
+            ->get();
 
         return response()->json($comments, 200);
     }
@@ -23,12 +28,13 @@ class VideoCommentController extends Controller
     /**
      * @param CommentRequest $request
      * @param Video $video
+     * @param User $user
      * @return JsonResponse
      */
-    public function store(CommentRequest $request, Video $video): JsonResponse
+    public function store(CommentRequest $request, Video $video, User $user): JsonResponse
     {
         $comment = $video->comments()->create([
-            'user_id' => $request->user()->id,
+            'user_id' => $user->id,
             'content' => $request->input('content'),
         ]);
 
