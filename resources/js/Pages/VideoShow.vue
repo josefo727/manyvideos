@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
 import Notifications from "@/Components/Notifications.vue";
+import VideoComments from '@/Components/VideoComments.vue';
 
 const props = defineProps({
     video: {
@@ -65,6 +66,7 @@ onMounted(() => {
                 Your browser does not support the video tag.
             </video>
         </div>
+        <VideoComments :videoId="video.id" />
     </div>
 </template>
 
