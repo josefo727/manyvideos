@@ -212,6 +212,20 @@ The following commands are managed via Supervisord:
 
 ---
 
+## Email Testing with Mailpit
+
+The application is configured to use **Mailpit** as the local email testing tool. This allows developers to intercept and view all outgoing emails in a browser-based interface, making it easier to debug and verify email content.
+
+### How to Access Mailpit
+Once the Docker environment is up and running, open your browser and navigate to:
+   ```
+   http://localhost:8025/
+   ```
+
+This setup ensures that all outgoing emails are routed to Mailpit for testing purposes during development.
+
+---
+
 ## Additional Notes
 
 ### Tailwind CSS
