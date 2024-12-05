@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\CarbonInterval;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,6 +28,10 @@ use Illuminate\Support\Facades\Storage;
  * @property string $thumbnail_path
  * @property string $formatted_size
  * @property string $formatted_duration
+ * @method static Builder|self search(string|null $term)
+ * @method static Builder|self withTags(array|null $tags)
+ * @method static Builder|self durationBetween(int|null $min, int|null $max)
+ * @method static Builder|self sizeBetween(int|null $min, int|null $max)
  */
 class Video extends Model
 {
@@ -118,5 +123,57 @@ class Video extends Model
         $seconds = $seconds ?? 0;
         $interval = CarbonInterval::seconds($seconds);
         return $interval->format('%i:%s');
+    }
+
+    /**
+     * @param $query
+     * @param $search
+     * @return void
+     */
+    public function scopeSearch($query, $search): void
+    {
+        if ($search) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+    }
+
+    /**
+     * @param $query
+     * @param $tags
+     * @return void
+     */
+    public function scopeWithTags($query, $tags): void
+    {
+        if ($tags) {
+            $query->whereHas('tags', function ($q) use ($tags) {
+                $q->whereIn('tags.id', $tags);
+            });
+        }
+    }
+
+    /**
+     * @param $query
+     * @param $min
+     * @param $max
+     * @return void
+     */
+    public function scopeDurationBetween($query, $min, $max): void
+    {
+        if ($min !== null && $max !== null) {
+            $query->whereBetween('duration', [$min * 60, $max * 60]);
+        }
+    }
+
+    /**
+     * @param $query
+     * @param $min
+     * @param $max
+     * @return void
+     */
+    public function scopeSizeBetween($query, $min, $max): void
+    {
+        if ($min !== null && $max !== null) {
+            $query->whereBetween('size', [$min * 1024 * 1024, $max * 1024 * 1024]);
+        }
     }
 }
