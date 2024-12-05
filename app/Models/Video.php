@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Carbon\CarbonInterval;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -121,8 +120,10 @@ class Video extends Model
     private function formatDuration(?int $seconds): string
     {
         $seconds = $seconds ?? 0;
-        $interval = CarbonInterval::seconds($seconds);
-        return $interval->format('%i:%s');
+        $minutes = floor($seconds / 60);
+        $remainingSeconds = $seconds % 60;
+
+        return sprintf('%d:%02d', $minutes, $remainingSeconds);
     }
 
     /**
