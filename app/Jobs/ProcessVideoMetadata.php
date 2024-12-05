@@ -11,6 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use RuntimeException;
 
 class ProcessVideoMetadata implements ShouldQueue
@@ -89,7 +90,9 @@ class ProcessVideoMetadata implements ShouldQueue
             mkdir($thumbnailDirectory, 0775, true);
         }
 
-        $thumbnailPath = "thumbnails/{$this->video->id}.jpg";
+        $imgName = Str::random(10) . '-' . $this->video->id;
+
+        $thumbnailPath = "thumbnails/{$imgName}.jpg";
         $videoFile = FFMpeg::create()->open(Storage::disk('public')->path($this->video->path));
         $thumbnailFullPath = Storage::disk('public')->path($thumbnailPath);
 
