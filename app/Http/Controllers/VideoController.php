@@ -13,7 +13,7 @@ class VideoController extends Controller
     public function __invoke(Video $video): Response
     {
         return Inertia::render('VideoShow', [
-            'video' => $video->load('tags', 'user'),
+            'video' => $video->load('tags:id,name', 'user:id,name'),
         ]);
     }
 }
