@@ -19,7 +19,7 @@ class VideoController extends Controller
             ->videos()
             ->with(['tags', 'comments'])
             ->orderBy('id', 'desc')
-            ->paginate();
+            ->paginate(10);
 
         return Inertia::render('Admin/Videos/Index', [
             'videos' => $videos,

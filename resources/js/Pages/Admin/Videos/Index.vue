@@ -1,5 +1,6 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { Inertia } from '@inertiajs/inertia';
 
 const props = defineProps({
     videos: {
@@ -7,6 +8,12 @@ const props = defineProps({
         required: true,
     },
 });
+
+function changePage(url) {
+    if (url) {
+        Inertia.get(url);
+    }
+}
 
 </script>
 
@@ -47,6 +54,9 @@ const props = defineProps({
                                     <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
                                         Tags
                                     </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
+                                        Comments
+                                    </th>
                                     <th scope="col" class="px-6 py-3 text-right text-sm font-medium text-gray-600 uppercase tracking-wider">
                                         Actions
                                     </th>
@@ -69,9 +79,17 @@ const props = defineProps({
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                                         {{ video.tags.map(tag => tag.name).join(', ') }}
                                     </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                        {{ video.comments_count }}
+                                    </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <a :href="`/videos/${video.id}`" target="_blank">
+                                            <button type="button" class="bg-green-500 text-white px-2 py-1 text-xs font-semibold rounded hover:bg-blue-700 mr-4">
+                                                View
+                                            </button>
+                                        </a>
                                         <a :href="`/admin/videos/${video.id}/edit`">
-                                            <button type="submit" class="bg-blue-500 text-white px-2 py-1 text-xs font-semibold rounded hover:bg-blue-700 mr-4">
+                                            <button type="button" class="bg-blue-500 text-white px-2 py-1 text-xs font-semibold rounded hover:bg-blue-700 mr-4">
                                                 Edit
                                             </button>
                                         </a>
@@ -85,6 +103,24 @@ const props = defineProps({
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                    <!-- Paginación -->
+                    <div class="flex justify-between items-center p-6">
+                        <button
+                            @click="changePage(videos.prev_page_url)"
+                            :disabled="!videos.prev_page_url"
+                            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                        >
+                            Previous
+                        </button>
+
+                        <button
+                            @click="changePage(videos.next_page_url)"
+                            :disabled="!videos.next_page_url"
+                            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                        >
+                            Next
+                        </button>
                     </div>
                 </div>
             </div>
