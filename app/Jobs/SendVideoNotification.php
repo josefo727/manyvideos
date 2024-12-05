@@ -3,12 +3,13 @@
 namespace App\Jobs;
 
 use App\Models\Video;
+use App\Notifications\VideoPublishedNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use App\Notifications\VideoPublished;
+use App\Events\VideoPublished;
 
 class SendVideoNotification implements ShouldQueue
 {
@@ -18,6 +19,7 @@ class SendVideoNotification implements ShouldQueue
 
     public function handle(): void
     {
-        broadcast(new VideoPublished($this->video));
+        VideoPublished::dispatch($this->video);
+        $this->video->user->notify(new VideoPublishedNotification($this->video));
     }
 }

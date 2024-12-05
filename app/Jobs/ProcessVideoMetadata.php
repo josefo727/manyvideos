@@ -109,6 +109,6 @@ class ProcessVideoMetadata implements ShouldQueue
      */
     public function sendNotification(): void
     {
-        SendVideoNotification::dispatch($this->video)->onQueue('send-notifications');
+        SendVideoNotification::dispatch($this->video);
     }
 }
