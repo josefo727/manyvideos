@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Route;
 
 class HomeController extends Controller
 {
@@ -22,6 +23,8 @@ class HomeController extends Controller
         $tags = $this->getTags();
 
         return Inertia::render('Home', [
+            'canLogin' => Route::has('login'),
+            'canRegister' => Route::has('register'),
             'videos' => $videos,
             'tags' => $tags,
             'filters' => $filters,

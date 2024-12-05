@@ -1,12 +1,18 @@
 <script setup>
 import { ref, watch } from 'vue';
-import { useForm } from '@inertiajs/vue3';
+import {Link, useForm, Head } from '@inertiajs/vue3';
 import VideoCard from '@/Components/VideoCard.vue';
 import Multiselect from 'vue-multiselect';
 import 'vue-multiselect/dist/vue-multiselect.min.css';
 import Notifications from "@/Components/Notifications.vue";
 
 const props = defineProps({
+    canLogin: {
+        type: Boolean,
+    },
+    canRegister: {
+        type: Boolean,
+    },
     filters: {
         type: Object,
         default: () => ({
@@ -65,11 +71,12 @@ const handleTagClick = (tagId) => {
 </script>
 
 <template>
+    <Head title="Home" />
     <div class="container mx-auto px-4">
         <!-- Header -->
         <header class="flex justify-between items-center py-4">
             <h1 class="text-3xl font-bold">ManyVideos</h1>
-            <div class="flex space-x-2 justify-between items-center w-1/3">
+            <div class="flex space-x-2 justify-between items-center w-1/2">
                 <input
                     type="text"
                     v-model="form.search"
@@ -77,6 +84,32 @@ const handleTagClick = (tagId) => {
                     class="border rounded p-2 w-4/5"
                 />
                 <Notifications />
+                <nav v-if="canLogin" class="-mx-3 flex flex-1 justify-end">
+                    <Link
+                        v-if="$page.props.auth.user"
+                        :href="route('dashboard')"
+                        class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
+                    >
+                        Dashboard
+                    </Link>
+
+                    <template v-else>
+                        <Link
+                            :href="route('login')"
+                            class="text-nowrap rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
+                        >
+                            Log in
+                        </Link>
+
+                        <Link
+                            v-if="canRegister"
+                            :href="route('register')"
+                            class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
+                        >
+                            Register
+                        </Link>
+                    </template>
+                </nav>
             </div>
         </header>
 
